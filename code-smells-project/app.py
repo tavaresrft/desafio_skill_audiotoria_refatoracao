@@ -1,7 +1,5 @@
 """Application factory and development-server entry point."""
 
-import os
-
 from flask import Flask
 from flask_cors import CORS
 
@@ -32,7 +30,7 @@ app = create_app()
 
 if __name__ == "__main__":
     app.run(
-        host=os.environ.get("HOST", "0.0.0.0"),
-        port=int(os.environ.get("PORT", "5000")),
+        host=app.config["HOST"],
+        port=app.config["PORT"],
         debug=app.config["DEBUG"],
     )
