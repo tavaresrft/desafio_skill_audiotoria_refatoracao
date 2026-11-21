@@ -1,0 +1,103 @@
+"""SQLite lifecycle, schema and seed data."""
+
+import sqlite3
+from pathlib import Path
+
+from flask import current_app, g
+
+from security import hash_password, is_password_hash
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS produtos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    descricao TEXT,
+    preco REAL,
+    estoque INTEGER,
+    categoria TEXT,
+    ativo INTEGER DEFAULT 1,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT,
+    email TEXT,
+    senha TEXT,
+    tipo TEXT DEFAULT 'cliente',
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS pedidos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    status TEXT DEFAULT 'pendente',
+    total REAL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS itens_pedido (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pedido_id INTEGER,
+    produto_id INTEGER,
+    quantidade INTEGER,
+    preco_unitario REAL
+);
+"""
+
+SEED_PRODUCTS = [
+    ("Notebook Gamer", "Notebook potente para jogos", 5999.99, 10, "informatica"),
+    ("Mouse Wireless", "Mouse sem fio ergonômico", 89.90, 50, "informatica"),
+    ("Teclado Mecânico", "Teclado mecânico RGB", 299.90, 30, "informatica"),
+    ("Monitor 27''", "Monitor 27 polegadas 144hz", 1899.90, 15, "informatica"),
+    ("Headset Gamer", "Headset com microfone", 199.90, 25, "informatica"),
+    ("Cadeira Gamer", "Cadeira ergonômica", 1299.90, 8, "moveis"),
+    ("Webcam HD", "Webcam 1080p", 249.90, 20, "informatica"),
+    ("Hub USB", "Hub USB 3.0 7 portas", 79.90, 40, "informatica"),
+    ("SSD 1TB", "SSD NVMe 1TB", 449.90, 35, "informatica"),
+    ("Camiseta Dev", "Camiseta estampa código", 59.90, 100, "vestuario"),
+]
+SEED_USERS = [
+    ("Admin", "admin@loja.com", "admin123", "admin"),
+    ("João Silva", "joao@email.com", "123456", "cliente"),
+    ("Maria Santos", "maria@email.com", "senha123", "cliente"),
+]
+
+
+def get_db():
+    """Return this request's SQLite connection, opening it lazily."""
+    if "db" not in g:
+        db_path = current_app.config["DATABASE"]
+        if db_path != ":memory:":
+            Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+        connection = sqlite3.connect(db_path)
+        connection.row_factory = sqlite3.Row
+        g.db = connection
+    return g.db
+
+
+def close_db(_error=None):
+    connection = g.pop("db", None)
+    if connection is not None:
+        connection.close()
+
+
+def init_db():
+    db = get_db()
+    db.executescript(SCHEMA)
+    if db.execute("SELECT COUNT(*) FROM produtos").fetchone()[0] == 0:
+        db.executemany(
+            "INSERT INTO produtos (nome, descricao, preco, estoque, categoria) VALUES (?, ?, ?, ?, ?)",
+            SEED_PRODUCTS,
+        )
+    if db.execute("SELECT COUNT(*) FROM usuarios").fetchone()[0] == 0:
+        db.executemany(
+            "INSERT INTO usuarios (nome, email, senha, tipo) VALUES (?, ?, ?, ?)",
+            [(name, email, hash_password(password), role) for name, email, password, role in SEED_USERS],
+        )
+
+    # Upgrade legacy plaintext credentials once, preserving existing accounts.
+    for row in db.execute("SELECT id, senha FROM usuarios").fetchall():
+        if not is_password_hash(row["senha"]):
+            db.execute(
+                "UPDATE usuarios SET senha = ? WHERE id = ?",
+                (hash_password(row["senha"] or ""), row["id"]),
+            )
+    db.commit()
