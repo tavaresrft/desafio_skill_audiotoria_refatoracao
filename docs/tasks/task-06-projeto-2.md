@@ -34,6 +34,6 @@ Demonstrar portabilidade da skill em uma API Node.js/Express de LMS com fluxo de
 - [x] Refatoração preservou o fluxo de checkout e os contratos públicos.
 - [x] Boot e endpoints originais foram validados com evidência registrada.
 - [x] `docs/ecommerce-api-legacy/README.md` foi atualizado com resultados e limitações.
-- [ ] Código refatorado foi commitado no repositório de entrega.
+- [x] Código refatorado foi commitado no repositório de entrega (`fc0e591`).
 
 O arquivo indicado na solicitação como `task-06-projeto-1.md` não existe; esta T6 corresponde a `task-06-projeto-2.md`.
