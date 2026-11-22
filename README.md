@@ -4,11 +4,11 @@ Desafio de desenvolvimento de uma skill reutilizável para analisar, auditar e r
 
 ## Análise Manual
 
-Os fontes originais foram inspecionados no repositório-base em `/home/romulo/projetos/full_cycle/mba-ia-refactor-projects-skill`. Os relatórios manuais e evidências por arquivo/linha estão organizados por projeto:
+Os fontes originais foram inspecionados no repositório-base em `/home/romulo/projetos/full_cycle/mba-ia-refactor-projects-skill`. Os READMEs mantidos junto a cada código descrevem a execução; os relatórios de auditoria versionados registram evidências por arquivo/linha:
 
-- [code-smells-project](docs/code-smells-project/README.md): API Flask de e-commerce inicialmente monolítica.
-- [ecommerce-api-legacy](docs/ecommerce-api-legacy/README.md): API Express de LMS com checkout e SQLite em memória.
-- [task-manager-api](docs/task-manager-api/README.md): API Flask com separação parcial em Models, Routes, Services e Utils.
+- [code-smells-project](code-smells-project/README.md): API Flask de e-commerce inicialmente monolítica; findings em [audit-project-1.md](reports/audit-project-1.md).
+- [ecommerce-api-legacy](ecommerce-api-legacy/README.md): API Express de LMS com checkout e SQLite em memória; findings em [audit-project-2.md](reports/audit-project-2.md).
+- [task-manager-api](task-manager-api/README.md): API Flask com separação parcial em Models, Routes, Services e Utils; findings em [audit-project-3.md](reports/audit-project-3.md).
 
 ### Síntese da auditoria da skill
 
@@ -30,7 +30,7 @@ A portabilidade vem de detectar stack, rotas e arquitetura pela evidência obser
 
 O fluxo exige análise estática sem escrita, relatório com evidências e severidade, revisão humana e confirmação explícita do escopo antes da Fase 3. Para o projeto 3, a autorização foi dada em 2026-11-22 e a fase foi concluída; boot e todos os endpoints foram validados, com mudanças de autenticação/autorização descritas como alterações intencionais de contrato. APIs deprecated só são relatadas após consulta às fontes oficiais para a versão permitida/instalada.
 
-Decisões e revisão da skill estão em [T2](docs/tasks/task-02-desenho-skill-design.md) e [T4](docs/tasks/task-04-revisao-skill-review.md). A T4 reforçou a meta de cinco achados sustentáveis, a proibição de completar contagem com especulação, a autorização restrita ao escopo do relatório e a regra contra declarar “zero problemas” sem varredura documentada.
+As decisões da skill priorizam achados verificáveis, evidência com localização, severidade justificada e confirmação explícita do escopo antes de qualquer escrita. A revisão também reforçou que a contagem mínima não deve ser completada com especulação e que “zero problemas” exige varredura documentada.
 
 ## Resultados
 
@@ -42,9 +42,9 @@ Decisões e revisão da skill estão em [T2](docs/tasks/task-02-desenho-skill-de
 
 ### Checklists de validação por projeto
 
-- **Projeto 1:** Fase 1/2 concluídas; oito findings incluindo CRITICAL/HIGH; confirmação obtida; boot e 19 endpoints validados; diferenças intencionais documentadas. Registro: [T5](docs/tasks/task-05-projeto-1.md).
-- **Projeto 2:** Fase 1/2 concluídas; oito findings incluindo CRITICAL/HIGH; confirmação obtida; smoke test, boot e três endpoints validados. Registro: [T6](docs/tasks/task-06-projeto-2.md).
-- **Projeto 3:** Fases 1/2/3 concluídas; onze findings incluindo CRITICAL/HIGH; mudanças de autenticação e autorização intencionais; boot e 22 endpoints validados. Registro: [T7](docs/tasks/task-07-projeto-3.md).
+- **Projeto 1:** Fase 1/2 concluídas; oito findings incluindo CRITICAL/HIGH; confirmação obtida; boot e 19 endpoints validados; diferenças intencionais documentadas em [README](code-smells-project/README.md).
+- **Projeto 2:** Fase 1/2 concluídas; oito findings incluindo CRITICAL/HIGH; confirmação obtida; smoke test, boot e três endpoints validados em [README](ecommerce-api-legacy/README.md).
+- **Projeto 3:** Fases 1/2/3 concluídas; onze findings incluindo CRITICAL/HIGH; mudanças de autenticação e autorização intencionais; boot e 22 endpoints validados em [README](task-manager-api/README.md).
 
 As validações foram feitas em ambiente local e isolado, sem credenciais reais ou dados de cliente. No projeto 2, `npm ci` reportou 13 vulnerabilidades de dependências (2 low, 1 moderate, 8 high, 2 critical) e avisos de pacotes transitivos deprecated; não houve atualização de stack/lockfile nesta etapa. O endpoint `/api/admin/financial-report` continua sem autenticação por preservação do contrato existente e está documentado como limitação. A simulação de pagamento não é integração de gateway.
 

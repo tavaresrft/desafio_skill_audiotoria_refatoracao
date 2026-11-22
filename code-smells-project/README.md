@@ -36,4 +36,4 @@ Na primeira inicialização, schema e dados demonstrativos são criados. A aplic
 python app.py
 ```
 
-O inventário completo das rotas e evidências da execução/refatoração está em `../reports/audit-project-1.md` e `../docs/code-smells-project/README.md` no repositório de entrega.
+O inventário de rotas está em [audit-project-1.md](../reports/audit-project-1.md); evidências de boot e endpoints estão em [validation-project-1.md](../reports/validation-project-1.md).

@@ -19,7 +19,7 @@ senha de usuário seed no banco temporário: prefixo PBKDF2 verificado
 POST /admin/query e POST /admin/reset-db: 410 Gone (desativados intencionalmente)
 ```
 
-Foram exercitados CRUD de produtos e usuários, login, criação/listagem/atualização de pedido, relatório e health. Os 19 resultados incluem os dois `410` esperados para as rotas administrativas desativadas. O registro detalhado das mudanças e das limitações está em [README do projeto](../docs/code-smells-project/README.md#execução-e-refatoração--t5) e [relatório de auditoria](audit-project-1.md).
+Foram exercitados CRUD de produtos e usuários, login, criação/listagem/atualização de pedido, relatório e health. Os 19 resultados incluem os dois `410` esperados para as rotas administrativas desativadas. O registro das mudanças está no [README do projeto](../code-smells-project/README.md) e no [relatório de auditoria](audit-project-1.md).
 
 ## Limitações
 

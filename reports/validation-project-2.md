@@ -19,7 +19,7 @@ npm start (HOST=127.0.0.1, PORT=5183, DATABASE_PATH=:memory:): PASS
   DELETE /api/users/:id: 200
 ```
 
-O processo local foi encerrado ao final da validação. A base SQLite em memória impediu uso de dados persistentes do repositório. Nenhum gateway de pagamento foi chamado; o resultado aprovado é explicitamente uma simulação. O registro de mudanças e limitações está no [README do projeto](../docs/ecommerce-api-legacy/README.md#execução-e-refatoração--t6) e no [relatório de auditoria](audit-project-2.md).
+O processo local foi encerrado ao final da validação. A base SQLite em memória impediu uso de dados persistentes do repositório. Nenhum gateway de pagamento foi chamado; o resultado aprovado é explicitamente uma simulação. O registro de mudanças e limitações está no [README do projeto](../ecommerce-api-legacy/README.md) e no [relatório de auditoria](audit-project-2.md).
 
 ## Avisos de dependências
 
