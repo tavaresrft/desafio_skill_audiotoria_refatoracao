@@ -65,24 +65,31 @@
 
 A classificação sobre `Query.get()` como API deprecated não foi usada como achado nesta análise, pois exigiria confirmar comportamento da versão efetiva do ORM. Os achados listados são confirmáveis no código original; não foram executados testes nesta etapa.
 
-## Auditoria e estado da execução — T7
+## Auditoria, refatoração e validação — T7
 
 O relatório da Fase 2 está em [audit-project-3.md](../../reports/audit-project-3.md). Ele registra 11 findings: 2 CRITICAL, 1 HIGH, 5 MEDIUM e 3 LOW. A auditoria confirmou os achados manuais e acrescentou, entre outros, ausência de autorização com promoção a admin, seed destrutivo, validação incompleta e uso da API legada `Query.get()`.
 
-| Antes | Estado depois da T7 |
+| Antes | Depois da T7 |
 |---|---|
-| Models, Blueprints/Routes, Services e Utils coexistiam, mas handlers ainda executavam consultas ORM e regras de negócio | Nenhuma alteração de aplicação foi feita; a estrutura original permanece intacta |
-| MD5, hash em serialização, segredo/SMTP no código e ausência de autorização nas rotas examinadas | Achados documentados; correções não foram aplicadas |
-| Consultas repetidas, coleções completas em memória e seed que apaga registros | Achados documentados; não houve validação de runtime |
+| Models, Blueprints/Routes, Services e Utils coexistiam, mas handlers ainda executavam regras e consultas ORM | Estrutura útil preservada; factory/composition root e `config.py`; routes atuam na fronteira HTTP e delegam casos de uso/consultas a Services; autorização por token e papel |
+| MD5 e hash exposto em serialização; login devolvia token literal e rotas aceitavam mudanças de papel sem autorização | `scrypt` para novas senhas; hash MD5 é atualizado após login válido; respostas não incluem senha/hash; bearer tokens assinados e com expiração; acesso por usuário/papel; apenas admin altera papéis/estado e cadastro público não define role |
+| Chave e SMTP no fonte; debug ativo; consultas repetidas e seed destrutivo | Segredo de aplicação obrigatório em produção e efêmero em desenvolvimento; SMTP configurado pelo ambiente; debug desligado; joins/agregações reduzem N+1; seed idempotente sem apagar registros |
+| Validação de entrada e tratamento de erros inconsistentes; chamadas `Query.get()` | Validação de payloads fortalecida, erros de persistência registrados sem detalhes sensíveis na resposta e buscas por ID migradas para `db.session.get()` |
 
-**Validação:** somente inspeção estática das Fases 1 e 2. Boot, seed e os 22 endpoints não foram executados. Não existe log de runtime para este projeto. A Fase 3, incluindo token assinado e autorização nas operações protegidas, aguarda confirmação explícita conforme o gate do relatório. Portanto, não há “depois” refatorado nem commit de código para registrar nesta etapa.
+**Contratos:** os 22 caminhos e métodos originais foram preservados. Login agora retorna token assinado; operações protegidas exigem bearer token; dados de usuário não incluem senha; cadastro público não pode escolher papel; operações sobre recursos de outros usuários exigem papel apropriado. Essas mudanças de autorização e credenciais são intencionais e estão cobertas pela validação.
 
-**Comandos planejados, ainda não executados:**
+**Validação executada:** dependências pinadas instaladas isoladamente em `/tmp/task-manager-api-deps`; banco SQLite temporário em diretório descartável; seed executado duas vezes sem duplicar registros nem apagar conteúdo. Testes com client Flask e chamadas HTTP locais confirmaram boot e 22/22 caminhos/métodos, CRUD, login, permissões de usuário/admin, rejeição de token adulterado, respostas sem hash, migração de senha MD5 após login válido e códigos de erro esperados. O processo HTTP escutou somente em `127.0.0.1` e foi encerrado ao final. Evidência sanitizada: [validation-project-3.md](../../reports/validation-project-3.md).
+
+**Como executar em ambiente local descartável:**
 
 ```bash
 pip install -r requirements.txt
-python seed.py  # destrutivo no banco configurado; usar apenas banco descartável
+export APP_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(48))')"
+export DATABASE_PATH="/caminho/para/tasks-dev.sqlite"
+export SEED_ADMIN_PASSWORD="<senha-local-com-8-ou-mais-caracteres>"
+export SEED_DEMO_PASSWORD="<senha-local-com-8-ou-mais-caracteres>"
+python seed.py
 python app.py
 ```
 
-O seed remove dados existentes antes de recriá-los; não execute contra dados que devam ser preservados. A versão transitiva efetiva de SQLAlchemy também não foi confirmada, pois o projeto não contém lockfile.
+Em produção, defina `APP_ENV=production` e forneça `APP_SECRET_KEY` por ambiente/secret manager; a aplicação falha no boot se a chave estiver ausente. O seed não apaga registros e só insere usuários/categorias/tasks que faltam; as senhas dos usuários seed vêm do ambiente e não são registradas. Contas existentes com MD5 são migradas no próximo login correto; recomenda-se que contas seed antigas troquem suas senhas fracas. SQLAlchemy não é pinado diretamente; a instalação validada resolveu SQLAlchemy 2.1.9 via Flask-SQLAlchemy 3.1.1.

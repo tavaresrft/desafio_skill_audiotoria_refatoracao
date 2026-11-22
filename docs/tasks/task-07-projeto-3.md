@@ -31,10 +31,10 @@ Validar que a skill reconhece problemas em uma API Flask que já possui organiza
 - [x] Skill foi copiada/conferida e Fase 1 identificou Flask, domínio e camadas existentes.
 - [x] Relatório da Fase 2 foi salvo em `reports/audit-project-3.md` e comparado à análise manual.
 - [x] Auditoria identificou achados concretos além da existência de camadas.
-- [ ] Confirmação explícita foi obtida antes de iniciar a Fase 3.
-- [ ] Refatoração preservou as partes úteis e os contratos públicos.
-- [ ] Boot e todos os endpoints originais foram validados com evidência registrada.
-- [ ] `docs/task-manager-api/README.md` foi atualizado com resultados e limitações.
-- [ ] Código refatorado foi commitado no repositório de entrega.
+- [x] Confirmação explícita foi obtida antes de iniciar a Fase 3 (instrução do usuário em 2026-11-22 autorizando implementar o escopo previsto no `build.md` e no gate do relatório).
+- [x] Refatoração preservou os 22 caminhos/métodos; as novas exigências de bearer token e autorização são mudanças de segurança intencionais e documentadas.
+- [x] Boot e todos os endpoints originais foram validados com evidência registrada em `reports/validation-project-3.md`.
+- [x] `docs/task-manager-api/README.md` foi atualizado com mudanças, resultados e limitações.
+- [x] Código refatorado foi commitado no repositório de entrega.
 
-Relatório atual: [`reports/audit-project-3.md`](../../reports/audit-project-3.md). Nenhum arquivo da aplicação foi alterado; aguarda-se a confirmação do gate da Fase 2.
+Relatório da Fase 2: [`reports/audit-project-3.md`](../../reports/audit-project-3.md). Evidências de runtime da Fase 3: [`reports/validation-project-3.md`](../../reports/validation-project-3.md).
